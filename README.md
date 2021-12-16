@@ -3,6 +3,9 @@
 
 Official implementation of the paper "Deep ViT Features as Dense Visual Descriptors".
 
+![teaser](./teaser.png)
+
+
 ## Setup
 Our code is developed in `pytorch` and requires the following modules: `tqdm, faiss, timm, matplotlib, pydensecrf, opencv`.
 We recommend setting the running environment via Anaconda by running the following commands:
@@ -23,7 +26,7 @@ You can specify the pretrained model using the `--model` flag with the following
 
 You can specify the stride of patch extracting layer to increase resolution using the `--stride` flag.
 
-## Part Co-segmentation [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/googlecolab/colabtools/blob/master/notebooks/colab-github-demo.ipynb)
+## Part Co-segmentation [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/shiramir/dino-vit-features/blob/main/part_cosegmentation.ipynb)
 We provide a notebook for running on a single example in `part_cosegmentation.ipynb`. 
 
 To run on several image sets, arrange each set in a directory, inside a data root directory:
@@ -48,7 +51,7 @@ The following command will produce results in the specified `<save_root_name>`:
 python correspondences.py --root_dir <sets_root_name> --save_dir <save_root_name>
 ```
 
-## Co-segmentation [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/googlecolab/colabtools/blob/master/notebooks/colab-github-demo.ipynb)
+## Co-segmentation [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/shiramir/dino-vit-features/blob/main/cosegmentation.ipynb)
 We provide a notebook for running on a single example in `cosegmentation.ipynb`. 
 
 To run on several image sets, arrange each set in a directory, inside a data root directory:
@@ -74,7 +77,7 @@ python correspondences.py --root_dir <sets_root_name> --save_dir <save_root_name
 ```
 
 
-## Point Correspondences [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/googlecolab/colabtools/blob/master/notebooks/colab-github-demo.ipynb)
+## Point Correspondences [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/shiramir/dino-vit-features/blob/main/correspondences.ipynb)
 We provide a notebook for running on a single example in `correpondences.ipynb`. 
 
 To run on several image pairs, arrange each image pair in a directory, inside a data root directory:
