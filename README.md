@@ -13,6 +13,16 @@ We recommend setting the running environment via Anaconda by running the followi
 $ conda env create -f env/environment.yml
 $ conda activate dino-vit-feats-env
 ```
+Otherwise, run the following commands in your conda environment:
+```
+$ conda install pytorch torchvision torchaudio cudatoolkit=11 -c pytorch
+$ conda install tqdm
+$ conda install -c conda-forge faiss
+$ conda install -c conda-forge timm 
+$ conda install matplotlib
+$ pip install opencv-python
+$ pip install git+https://github.com/lucasb-eyer/pydensecrf.git
+```
 
 ## ViT Extractor
 We provide a wrapper class for a ViT model to extract dense visual descriptors in `extractor.py`.
