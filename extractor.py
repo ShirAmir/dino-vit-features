@@ -8,7 +8,7 @@ import math
 import timm
 import types
 from pathlib import Path
-from typing import Union
+from typing import Union, List, Tuple
 from PIL import Image
 
 
@@ -80,7 +80,7 @@ class ViTExtractor:
         return model
 
     @staticmethod
-    def _fix_pos_enc(patch_size: int, stride_hw: tuple[int, int]):
+    def _fix_pos_enc(patch_size: int, stride_hw: Tuple[int, int]):
         """
         Creates a method for position encoding interpolation.
         :param patch_size: patch size of the model.
@@ -138,7 +138,7 @@ class ViTExtractor:
         return model
 
     def preprocess(self, image_path: Union[str, Path],
-                   load_size: Union[int, tuple[int, int]] = None) -> tuple[torch.Tensor, Image]:
+                   load_size: Union[int, Tuple[int, int]] = None) -> Tuple[torch.Tensor, Image.Image]:
         """
         Preprocesses an image before extraction.
         :param image_path: path to image to be extracted.
@@ -182,7 +182,7 @@ class ViTExtractor:
             self._feats.append(qkv[facet_idx]) #Bxhxtxd
         return _inner_hook
 
-    def _register_hooks(self, layers: list[int], facet: str) -> None:
+    def _register_hooks(self, layers: List[int], facet: str) -> None:
         """
         register hook to extract features.
         :param layers: layers from which to extract features.
@@ -207,7 +207,7 @@ class ViTExtractor:
             handle.remove()
         self.hook_handlers = []
 
-    def _extract_features(self, batch: torch.Tensor, layers: list[int] = 11, facet: str = 'key') -> list[torch.Tensor]:
+    def _extract_features(self, batch: torch.Tensor, layers: List[int] = 11, facet: str = 'key') -> List[torch.Tensor]:
         """
         extract features from the model
         :param batch: batch to extract features for. Has shape BxCxHxW.

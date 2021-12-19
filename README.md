@@ -3,11 +3,12 @@
 
 Official implementation of the paper "Deep ViT Features as Dense Visual Descriptors".
 
-![teaser](./teaser.png)
+![teaser](./images/teaser.png)
 
 
 ## Setup
-Our code is developed in `pytorch` and requires the following modules: `tqdm, faiss, timm, matplotlib, pydensecrf, opencv, scikit-learn`.
+Our code is developed in `pytorch` on and requires the following modules: `tqdm, faiss, timm, matplotlib, pydensecrf, opencv, scikit-learn`.
+We use `python=3.9` but our code should be runnable on any version above `3.6`.
 We recommend setting the running environment via Anaconda by running the following commands:
 ```
 $ conda env create -f env/environment.yml
