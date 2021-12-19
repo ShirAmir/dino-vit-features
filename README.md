@@ -7,7 +7,7 @@ Official implementation of the paper "Deep ViT Features as Dense Visual Descript
 
 
 ## Setup
-Our code is developed in `pytorch` and requires the following modules: `tqdm, faiss, timm, matplotlib, pydensecrf, opencv`.
+Our code is developed in `pytorch` and requires the following modules: `tqdm, faiss, timm, matplotlib, pydensecrf, opencv, scikit-learn`.
 We recommend setting the running environment via Anaconda by running the following commands:
 ```
 $ conda env create -f env/environment.yml
@@ -22,6 +22,7 @@ $ conda install -c conda-forge timm
 $ conda install matplotlib
 $ pip install opencv-python
 $ pip install git+https://github.com/lucasb-eyer/pydensecrf.git
+$ conda install -c anaconda scikit-learn
 ```
 
 ## ViT Extractor
@@ -58,7 +59,7 @@ To run on several image sets, arrange each set in a directory, inside a data roo
 ```
 The following command will produce results in the specified `<save_root_name>`:
 ```
-python correspondences.py --root_dir <sets_root_name> --save_dir <save_root_name>
+python part_cosegmentation.py --root_dir <sets_root_name> --save_dir <save_root_name>
 ```
 
 ## Co-segmentation [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/shiramir/dino-vit-features/blob/main/cosegmentation.ipynb)
@@ -83,7 +84,7 @@ To run on several image sets, arrange each set in a directory, inside a data roo
 ```
 The following command will produce results in the specified `<save_root_name>`:
 ```
-python correspondences.py --root_dir <sets_root_name> --save_dir <save_root_name>
+python cosegmentation.py --root_dir <sets_root_name> --save_dir <save_root_name>
 ```
 
 

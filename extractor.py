@@ -147,7 +147,7 @@ class ViTExtractor:
                     (1) the preprocessed image as a tensor to insert the model of shape BxCxHxW.
                     (2) the pil image in relevant dimensions
         """
-        pil_image = Image.open(image_path)
+        pil_image = Image.open(image_path).convert('RGB')
         if load_size is not None:
             pil_image = transforms.Resize(load_size, interpolation=transforms.InterpolationMode.LANCZOS)(pil_image)
         prep = transforms.Compose([
@@ -309,7 +309,7 @@ class ViTExtractor:
         :return: a tensor of saliency maps. has shape Bxt-1
         """
         assert self.model_type == "dino_vits8", f"saliency maps are supported only for dino_vits model_type."
-        self._extract_features(batch, [11], 'key')
+        self._extract_features(batch, [11], 'attn')
         head_idxs = [0, 2, 4, 5]
         curr_feats = self._feats[0] #Bxhxtxt
         cls_attn_map = curr_feats[:, head_idxs, 0, 1:].mean(dim=1) #Bx(t-1)
@@ -345,11 +345,13 @@ if __name__ == "__main__":
     parser.add_argument('--bin', default='False', type=str2bool, help="create a binned descriptor if True.")
 
     args = parser.parse_args()
-    device = 'cuda' if torch.cuda.is_available() else 'cpu'
-    extractor = ViTExtractor(args.model_type, args.stride, device=device)
-    image_batch, image_pil = extractor.preprocess(args.image_path, args.load_size)
-    print(f"Image {args.image_path} is preprocessed to tensor of size {image_batch.shape}.")
-    descriptors = extractor.extract_descriptors(image_batch.to(device), args.layer, args.facet, args.bin)
-    print(f"Descriptors are of size: {descriptors.shape}")
-    torch.save(descriptors, args.output_path)
-    print(f"Descriptors saved to: {args.output_path}")
+
+    with torch.no_grad():
+        device = 'cuda' if torch.cuda.is_available() else 'cpu'
+        extractor = ViTExtractor(args.model_type, args.stride, device=device)
+        image_batch, image_pil = extractor.preprocess(args.image_path, args.load_size)
+        print(f"Image {args.image_path} is preprocessed to tensor of size {image_batch.shape}.")
+        descriptors = extractor.extract_descriptors(image_batch.to(device), args.layer, args.facet, args.bin)
+        print(f"Descriptors are of size: {descriptors.shape}")
+        torch.save(descriptors, args.output_path)
+        print(f"Descriptors saved to: {args.output_path}")
