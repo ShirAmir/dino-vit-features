@@ -64,7 +64,7 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
     # create augmentations if needed
     if num_crop_augmentations > 0:
         augmentations_image_paths = []
-        augmentations_dir = save_dir / 'augs'
+        augmentations_dir = save_dir / 'augs' if save_dir is not None else Path('augs')
         augmentations_dir.mkdir(exist_ok=True, parents=True)
         for image_path in image_paths:
             image_batch, image_pil = extractor.preprocess(image_path, load_size)
@@ -104,7 +104,7 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
         saliency_maps_list.append(saliency_map)
 
         # save saliency maps and resized images if needed (not for augmentations)
-        if save_dir is not None and not ('_aug_' in image_path.stem):
+        if save_dir is not None and not ('_aug_' in Path(image_path).stem):
             fig, ax = plt.subplots()
             ax.axis('off')
             ax.imshow(saliency_maps_list[-1].reshape(num_patches_list[-1]), vmin=0, vmax=1, cmap='jet')
@@ -139,7 +139,7 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
     if save_dir is not None:
         cmap = 'jet' if num_labels > 10 else 'tab10'
         for image_path, num_patches, label_per_image in zip(image_paths, num_patches_list, labels_per_image):
-            if not ('_aug_' in image_path.stem):
+            if not ('_aug_' in Path(image_path).stem):
                 fig, ax = plt.subplots()
                 ax.axis('off')
                 ax.imshow(label_per_image.reshape(num_patches), vmin=0, vmax=num_labels-1, cmap=cmap)
@@ -149,7 +149,7 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
     # use saliency maps to vote for salient clusters (only original images vote, not augmentations)
     votes = np.zeros(num_labels)
     for image_path, image_labels, saliency_map in zip(image_paths, labels_per_image, saliency_maps_list):
-        if not ('_aug_' in image_path.stem):
+        if not ('_aug_' in Path(image_path).stem):
             for label in range(num_labels):
                 label_saliency = saliency_map[image_labels[:, 0] == label].mean()
                 if label_saliency > thresh:
@@ -221,16 +221,17 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
         if num_crop_augmentations > 0:
             curr_part_segmentations, curr_image_pil_list = [], []
             for image_path, part_seg, pil_image in zip(image_paths, part_segmentations, image_pil_list):
-                if not ('_aug_' in image_path.stem):
+                if not ('_aug_' in Path(image_path).stem):
                     curr_part_segmentations.append(part_seg)
                     curr_image_pil_list.append(pil_image)
         else:
             curr_part_segmentations, curr_image_pil_list = part_segmentations, image_pil_list
 
-        part_figs = draw_part_cosegmentation(part_num_labels, curr_part_segmentations, curr_image_pil_list)
-        for image, part_fig in zip(curr_images, part_figs):
-            part_fig.savefig(curr_save_dir / f'{Path(image).stem}_vis_sec_stage.png', bbox_inches='tight', pad_inches=0)
-        plt.close('all')
+        if save_dir is not None:
+            part_figs = draw_part_cosegmentation(part_num_labels, curr_part_segmentations, curr_image_pil_list)
+            for image, part_fig in zip(image_paths, part_figs):
+                part_fig.savefig(save_dir / f'{Path(image).stem}_vis_sec_stage.png', bbox_inches='tight', pad_inches=0)
+            plt.close('all')
 
         # get labels after crf for each descriptor
         smoothed_part_labels_per_image = []
@@ -243,7 +244,7 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
         # take only parts that appear in all original images (otherwise they belong to non-common objects)
         votes = np.zeros(part_num_labels)
         for image_path, image_labels in zip(image_paths, smoothed_part_labels_per_image):
-            if not ('_aug_' in image_path.stem):
+            if not ('_aug_' in Path(image_path).stem):
                 unique_labels = np.unique(image_labels[~np.isnan(image_labels)]).astype(np.int32)
                 votes[unique_labels] += 1
         common_labels = np.where(votes == num_images)[0]
@@ -317,7 +318,7 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
     if num_crop_augmentations > 0:
         no_aug_part_segmentations, no_aug_image_pil_list = [], []
         for image_path, part_seg, pil_image in zip(image_paths, part_segmentations, image_pil_list):
-            if not ('_aug_' in image_path.stem):
+            if not ('_aug_' in Path(image_path).stem):
                 no_aug_part_segmentations.append(part_seg)
                 no_aug_image_pil_list.append(pil_image)
         part_segmentations = no_aug_part_segmentations

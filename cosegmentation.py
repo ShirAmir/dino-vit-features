@@ -1,9 +1,7 @@
 import argparse
 import torch
 from pathlib import Path
-
 from torchvision import transforms
-
 from extractor import ViTExtractor
 from tqdm import tqdm
 import numpy as np
@@ -12,6 +10,7 @@ from PIL import Image
 import matplotlib.pyplot as plt
 import cv2
 from typing import List, Tuple
+
 
 def find_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_size: int = 224, layer: int = 11,
                         facet: str = 'key', bin: bool = False, thresh: float = 0.065, model_type: str = 'dino_vits8',
@@ -80,10 +79,6 @@ def find_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_size:
         if low_res_saliency_maps:
             reshape_op = transforms.Resize(curr_num_patches, transforms.InterpolationMode.NEAREST)
             saliency_map = np.array(reshape_op(Image.fromarray(saliency_map.reshape(curr_sal_num_patches)))).flatten()
-            #pil_saliency = Image.fromarray(saliency_map.reshape(curr_sal_num_patches)).resize(curr_num_patches, resample=Image.NEAREST)
-            #saliency_map = np.array(pil_saliency).flatten()
-            #reshape_op = transforms.Resize(curr_num_patches, transforms.InterpolationMode.NEAREST)
-            #saliency_map = reshape_op(saliency_map.reshape(curr_saliency_num_patches)).flatten()
         saliency_maps_list.append(saliency_map)
 
         # save saliency maps and resized images if needed
@@ -138,13 +133,12 @@ def find_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_size:
         algorithm = faiss.Kmeans(d=normalized_all_sampled_descriptors.shape[1], k=n_clusters, niter=300, nredo=10)
         algorithm.train(normalized_all_sampled_descriptors.astype(np.float32))
         squared_distances, labels = algorithm.index.search(normalized_all_descriptors.astype(np.float32), 1)
-        #algorithm.labels_ = algorithm.labels_.flatten()
         objective = squared_distances.sum()
         sum_of_squared_dists.append(objective / normalized_all_descriptors.shape[0])
         if (len(sum_of_squared_dists) > 1 and sum_of_squared_dists[-1] > elbow * sum_of_squared_dists[-2]):
             break
 
-    num_labels = np.max(labels) + 1
+    num_labels = np.max(n_clusters) + 1
     num_descriptors_per_image = [num_patches[0]*num_patches[1] for num_patches in num_patches_list]
     labels_per_image = np.split(labels, np.cumsum(num_descriptors_per_image))
 

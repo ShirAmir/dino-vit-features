@@ -9,6 +9,7 @@ Official implementation of the paper "Deep ViT Features as Dense Visual Descript
 ## Setup
 Our code is developed in `pytorch` on and requires the following modules: `tqdm, faiss, timm, matplotlib, pydensecrf, opencv, scikit-learn`.
 We use `python=3.9` but our code should be runnable on any version above `3.6`.
+We recomment running our code with any CUDA supported GPU for faster performance.
 We recommend setting the running environment via Anaconda by running the following commands:
 ```
 $ conda env create -f env/dino-vit-feats-env.yml

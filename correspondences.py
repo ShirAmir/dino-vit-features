@@ -10,10 +10,26 @@ import matplotlib.pyplot as plt
 from matplotlib.colors import ListedColormap
 from typing import List, Tuple
 
+
 def find_correspondences(image_path1: str, image_path2: str, num_pairs: int = 10, load_size: int = 224, layer: int = 9,
                          facet: str = 'key', bin: bool = True, thresh: float = 0.05, model_type: str = 'dino_vits8',
                          stride: int = 4) -> Tuple[List[Tuple[float, float]], List[Tuple[float, float]],
-                                                   Image.Image, Image.Image]:
+                                                                              Image.Image, Image.Image]:
+    """
+    finding point correspondences between two images.
+    :param image_path1: path to the first image.
+    :param image_path2: path to the second image.
+    :param num_pairs: number of outputted corresponding pairs.
+    :param load_size: size of the smaller edge of loaded images. If None, does not resize.
+    :param layer: layer to extract descriptors from.
+    :param facet: facet to extract descriptors from.
+    :param bin: if True use a log-binning descriptor.
+    :param thresh: threshold of saliency maps to distinguish fg and bg.
+    :param model_type: type of model to extract descriptors from.
+    :param stride: stride of the model.
+    :return: list of points from image_path1, list of corresponding points from image_path2, the processed pil image of
+    image_path1, and the processed pil image of image_path2.
+    """
     # extracting descriptors for each image
     device = 'cuda' if torch.cuda.is_available() else 'cpu'
     extractor = ViTExtractor(model_type, stride, device=device)
@@ -164,7 +180,6 @@ def str2bool(v):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Facilitate ViT Descriptor point correspondences.')
     parser.add_argument('--root_dir', type=str, required=True, help='The root dir of image pairs.')
-    parser.add_argument('--save_dir', type=str, required=True, help='The root save dir for image pair results.')
     parser.add_argument('--load_size', default=224, type=int, help='load size of the input image.')
     parser.add_argument('--stride', default=4, type=int, help="""stride of first convolution layer. 
                                                                  small stride -> higher resolution.""")
@@ -195,10 +210,11 @@ if __name__ == "__main__":
             curr_save_dir = save_dir / pair_dir.name
             curr_save_dir.mkdir(parents=True, exist_ok=True)
 
+            # compute point correspondences
             points1, points2, image1_pil, image2_pil = find_correspondences(curr_images[0], curr_images[1],
                                                                             args.num_pairs, args.load_size, args.layer,
                                                                             args.facet, args.bin, args.thresh)
-            # converting points in image coordinates
+            # saving point correspondences
             file1 = open(curr_save_dir / "correspondence_A.txt", "w")
             file2 = open(curr_save_dir / "correspondence_Bt.txt", "w")
             for point1, point2 in zip(points1, points2):
