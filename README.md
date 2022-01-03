@@ -11,7 +11,7 @@ Our code is developed in `pytorch` on and requires the following modules: `tqdm,
 We use `python=3.9` but our code should be runnable on any version above `3.6`.
 We recommend setting the running environment via Anaconda by running the following commands:
 ```
-$ conda env create -f env/environment.yml
+$ conda env create -f env/dino-vit-feats-env.yml
 $ conda activate dino-vit-feats-env
 ```
 Otherwise, run the following commands in your conda environment:
