@@ -14,11 +14,6 @@ from typing import List, Tuple
 import pydensecrf.densecrf as dcrf
 from matplotlib.colors import ListedColormap
 
-import sys
-sys.path.append("/home/labs/waic/shiramir/pydevd-pycharm.egg")
-import pydevd_pycharm
-pydevd_pycharm.settrace('132.76.81.209', port=12345, stdoutToServer=True, stderrToServer=True)
-
 
 def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_size: int = 224, layer: int = 11,
                              facet: str = 'key', bin: bool = False, thresh: float = 0.065,
@@ -432,7 +427,7 @@ if __name__ == "__main__":
             curr_save_dir = save_dir / set_dir.name
             curr_save_dir.mkdir(parents=True, exist_ok=True)
 
-            # computing cosegmentation
+            # computing part cosegmentation
             parts_imgs, pil_images = find_part_cosegmentation(curr_images, args.elbow, args.load_size, args.layer,
                                                               args.facet, args.bin, args.thresh, args.model_type,
                                                               args.stride, args.votes_percentage, args.sample_interval,
@@ -440,7 +435,7 @@ if __name__ == "__main__":
                                                               args.num_crop_augmentations, args.three_stages,
                                                               args.elbow_second_stage, curr_save_dir)
 
-            # saving cosegmentations
+            # saving part cosegmentations
             part_figs = draw_part_cosegmentation(args.num_parts, parts_imgs, pil_images)
 
             for image, part_fig in zip(curr_images, part_figs):
