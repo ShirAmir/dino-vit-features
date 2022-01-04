@@ -1,10 +1,15 @@
 # dino-vit-features
-[[paper](https://arxiv.org/abs/2112.05814)] [[project page](dino-vit-features.github.io)]
+[[paper](https://arxiv.org/abs/2112.05814)] [[project page](https://dino-vit-features.github.io)]
 
 Official implementation of the paper "Deep ViT Features as Dense Visual Descriptors".
 
 ![teaser](./images/teaser.png)
 
+>We demonstrate the effectiveness of deep features extracted from a self-supervised, pre-trained ViT model (DINO-ViT) as dense patch descriptors via real-world vision tasks: 
+(a-b) co-segmentation & part co-segmentation: given a set of input images (e.g., 4 input images), we automatically co-segment semantically
+common foreground objects (e.g., animals), and then further partition them into common parts; (c-d) point correspondence:
+given a pair of input images, we automatically extract a sparse set of corresponding points. We tackle these tasks by applying
+only lightweight, simple methodologies such as clustering or binning, to deep ViT features.
 
 ## Setup
 Our code is developed in `pytorch` on and requires the following modules: `tqdm, faiss, timm, matplotlib, pydensecrf, opencv, scikit-learn`.
@@ -63,6 +68,8 @@ The following command will produce results in the specified `<save_root_name>`:
 ```
 python part_cosegmentation.py --root_dir <sets_root_name> --save_dir <save_root_name>
 ```
+
+**Note:** The default configuration in `part_cosegmentation.ipynb` is suited for running on small sets (e.g. < 10). Increase amount of `num_crop_augmentations` for more stable results (and increased runtime). The default configuration in `part_cosegmentation.py` is suited for larger sets (e.g. >> 10).
 
 ## Co-segmentation [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](http://colab.research.google.com/github/shiramir/dino-vit-features/blob/main/cosegmentation.ipynb)
 We provide a notebook for running on a single example in `cosegmentation.ipynb`. 
