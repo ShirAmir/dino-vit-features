@@ -180,6 +180,7 @@ def str2bool(v):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Facilitate ViT Descriptor point correspondences.')
     parser.add_argument('--root_dir', type=str, required=True, help='The root dir of image pairs.')
+    parser.add_argument('--save_dir', type=str, required=True, help='The root save dir for image pairs results.')
     parser.add_argument('--load_size', default=224, type=int, help='load size of the input image.')
     parser.add_argument('--stride', default=4, type=int, help="""stride of first convolution layer. 
                                                                  small stride -> higher resolution.""")
