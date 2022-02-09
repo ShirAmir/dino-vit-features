@@ -94,7 +94,7 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
                 low_res_load_size = (curr_load_size[0] // 2, curr_load_size[1] // 2)
             else:
                 low_res_load_size = curr_load_size
-            image_batch, image_pil = saliency_extractor.preprocess(image_path, low_res_load_size)
+            image_batch, _ = saliency_extractor.preprocess(image_path, low_res_load_size)
 
         saliency_map = saliency_extractor.extract_saliency_maps(image_batch.to(device)).cpu().numpy()
         curr_sal_num_patches, curr_sal_load_size = saliency_extractor.num_patches, saliency_extractor.load_size

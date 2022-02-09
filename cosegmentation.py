@@ -72,7 +72,7 @@ def find_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_size:
                 low_res_load_size = (curr_load_size[0] // 2, curr_load_size[1] // 2)
             else:
                 low_res_load_size = curr_load_size
-            image_batch, image_pil = saliency_extractor.preprocess(image_path, low_res_load_size)
+            image_batch, _ = saliency_extractor.preprocess(image_path, low_res_load_size)
 
         saliency_map = saliency_extractor.extract_saliency_maps(image_batch.to(device)).cpu().numpy()
         curr_sal_num_patches, curr_sal_load_size = saliency_extractor.num_patches, saliency_extractor.load_size
@@ -164,20 +164,25 @@ def find_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_size:
     for img, labels, num_patches, load_size in zip(image_pil_list, labels_per_image, num_patches_list, load_size_list):
         mask = np.isin(labels, salient_labels).reshape(num_patches)
         resized_mask = np.array(Image.fromarray(mask).resize((load_size[1], load_size[0]), resample=Image.LANCZOS))
-        # apply grabcut on mask
-        grabcut_kernel_size = (7, 7)
-        kernel = np.ones(grabcut_kernel_size, np.uint8)
-        forground_mask = cv2.erode(np.uint8(resized_mask), kernel)
-        forground_mask = np.array(Image.fromarray(forground_mask).resize(img.size, Image.NEAREST))
-        background_mask = cv2.erode(np.uint8(1 - resized_mask), kernel)
-        background_mask = np.array(Image.fromarray(background_mask).resize(img.size, Image.NEAREST))
-        full_mask = np.ones((load_size[0], load_size[1]), np.uint8) * cv2.GC_PR_FGD
-        full_mask[background_mask == 1] = cv2.GC_BGD
-        full_mask[forground_mask == 1] = cv2.GC_FGD
-        bgdModel = np.zeros((1, 65), np.float64)
-        fgdModel = np.zeros((1, 65), np.float64)
-        cv2.grabCut(np.array(img), full_mask, None, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_MASK)
-        grabcut_mask = np.where((full_mask == 2) | (full_mask == 0), 0, 1).astype('uint8')
+        try:
+            # apply grabcut on mask
+            grabcut_kernel_size = (7, 7)
+            kernel = np.ones(grabcut_kernel_size, np.uint8)
+            forground_mask = cv2.erode(np.uint8(resized_mask), kernel)
+            forground_mask = np.array(Image.fromarray(forground_mask).resize(img.size, Image.NEAREST))
+            background_mask = cv2.erode(np.uint8(1 - resized_mask), kernel)
+            background_mask = np.array(Image.fromarray(background_mask).resize(img.size, Image.NEAREST))
+            full_mask = np.ones((load_size[0], load_size[1]), np.uint8) * cv2.GC_PR_FGD
+            full_mask[background_mask == 1] = cv2.GC_BGD
+            full_mask[forground_mask == 1] = cv2.GC_FGD
+            bgdModel = np.zeros((1, 65), np.float64)
+            fgdModel = np.zeros((1, 65), np.float64)
+            cv2.grabCut(np.array(img), full_mask, None, bgdModel, fgdModel, 5, cv2.GC_INIT_WITH_MASK)
+            grabcut_mask = np.where((full_mask == 2) | (full_mask == 0), 0, 1).astype('uint8')
+        except Exception:
+            # if mask is unfitted from gb (e.g. all zeros) -- don't apply it
+            grabcut_mask = resized_mask.astype('uint8')
+
         grabcut_mask = Image.fromarray(np.array(grabcut_mask, dtype=bool))
         segmentation_masks.append(grabcut_mask)
 
