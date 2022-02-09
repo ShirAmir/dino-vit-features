@@ -33,6 +33,15 @@ $ conda install -c anaconda scikit-learn
 ```
 
 ## ViT Extractor
+
+### Code Snippet
+```
+from extractor import ViTExtractor
+extractor = ViTExtractor()
+# imgs should be imagenet normalized tensors. shape BxCxHxW
+descriptors = extractor.extract_descriptors(imgs) 
+```
+---
 We provide a wrapper class for a ViT model to extract dense visual descriptors in `extractor.py`.
 You can extract descriptors to `.pt` files using the following command:
 ```
