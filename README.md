@@ -3,7 +3,7 @@
 
 Official implementation of the paper "Deep ViT Features as Dense Visual Descriptors".
 
-![teaser](./images/teaser.png)
+![teaser](./assets/teaser.png)
 
 >We demonstrate the effectiveness of deep features extracted from a self-supervised, pre-trained ViT model (DINO-ViT) as dense patch descriptors via real-world vision tasks: 
 (a-b) co-segmentation & part co-segmentation: given a set of input images (e.g., 4 input images), we automatically co-segment semantically
@@ -129,6 +129,20 @@ The following command will produce results in the specified `<save_root_name>`:
 ```
 python correspondences.py --root_dir <pairs_root_name> --save_dir <save_root_name>
 ```
+
+## Other Utilities
+### PCA
+We provide code for computing the PCA of several images in a single directory:
+```
+python pca.py --root_dir <images_root_name> --save_dir <save_root_name>
+```
+
+### Similarity Inspection
+We provide code for interactively visualizing the similarity of a chosen descriptor in the source image to all target descriptors in a terget image.
+```
+python inspect_similarity --image_a <path_to_image_a> --image_b <path_to_image_b>
+```
+
 
 ## Citation
 If you found this repository useful please consider starring ⭐ and citing :

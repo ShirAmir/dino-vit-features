@@ -101,6 +101,8 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
         if low_res_saliency_maps:
             reshape_op = transforms.Resize(curr_num_patches, transforms.InterpolationMode.NEAREST)
             saliency_map = np.array(reshape_op(Image.fromarray(saliency_map.reshape(curr_sal_num_patches)))).flatten()
+        else:
+            saliency_map = saliency_map[0]
         saliency_maps_list.append(saliency_map)
 
         # save saliency maps and resized images if needed (not for augmentations)
