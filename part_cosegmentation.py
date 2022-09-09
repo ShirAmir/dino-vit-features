@@ -270,7 +270,7 @@ def find_part_cosegmentation(image_paths: List[str], elbow: float = 0.975, load_
         common_part_algorithm = faiss.Kmeans(d=normalized_all_common_sampled_descriptors.shape[1], k=num_parts,
                                              niter=300, nredo=10)
         common_part_algorithm.train(normalized_all_common_sampled_descriptors.astype(np.float32))
-        _, common_part_labels = part_algorithm.index.search(normalized_all_common_descriptors.astype(np.float32), 1)
+        _, common_part_labels = common_part_algorithm.index.search(normalized_all_common_descriptors.astype(np.float32), 1)
 
         common_part_num_labels = np.max(common_part_labels) + 1
         parts_num_descriptors_per_image = [np.count_nonzero(mask) for mask in common_parts_masks]
